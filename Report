@@ -1,0 +1,166 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.OleDb;
+namespace Storage
+{
+    public partial class Form5 : Form
+    {
+        
+        public Form5()
+        {
+            InitializeComponent();
+        }
+
+        private void Form5_Load(object sender, EventArgs e)
+        {            // TODO: данная строка кода позволяет загрузить данные в таблицу "database1DataSet.Product_data". При необходимости она может быть перемещена или удалена.
+            this.product_dataTableAdapter.Fill(this.database1DataSet.Product_data);
+
+        }
+
+     
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            monthCalendar1.Visible = true;
+        }
+
+        private void monthCalendar1_DateChanged(object sender, DateRangeEventArgs e)
+        {
+            textBox2.Text = Convert.ToString(e.End).Remove(11);
+            monthCalendar1.Visible = false;
+        }
+
+        private void textBox4_TextChanged_1(object sender, EventArgs e)
+        {
+            monthCalendar2.Visible = true;
+        }
+
+        private void monthCalendar2_DateChanged(object sender, DateRangeEventArgs e)
+        {
+            textBox4.Text = Convert.ToString(e.End).Remove(11);
+            monthCalendar2.Visible = false;
+        }
+
+        private void всеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int perrow = 0; perrow < dataGridView1.Rows.Count; perrow++)
+            {
+                dataGridView1.Rows.Remove(dataGridView1.Rows[perrow]);
+            }
+                using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                
+                SqlDataAdapter sqlDat = new SqlDataAdapter("SELECT * FROM [Product_data] ", sqlConect); 
+                DataTable DataMass = new DataTable();
+                
+                sqlDat.Fill(DataMass);
+                dataGridView1.DataSource = DataMass;
+                for (int i = 0; i < dataGridView1.RowCount - 1; i++)
+                {
+
+                    if (DateTime.Parse(dataGridView1.SelectedRows[i].Cells[5].ToString()) > DateTime.Parse(textBox2.Text) & DateTime.Parse(dataGridView1.SelectedRows[i].Cells[5].ToString()) < DateTime.Parse(textBox4.Text))
+                    {
+                        int ind = dataGridView1.SelectedCells[0].RowIndex;
+                        dataGridView1.Rows.RemoveAt(ind);
+                    }
+
+
+                }
+            }
+         
+        }
+
+        private void принятыеТоварыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+            for (int perrow = 0; perrow < dataGridView1.Rows.Count; perrow++)
+            {
+                dataGridView1.Rows.Remove(dataGridView1.Rows[perrow]);
+            }
+            using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                SqlDataAdapter sqlDat = new SqlDataAdapter("SELECT * FROM [Product_data] WHERE Storage_status ='Take'", sqlConect);
+                DataTable DataMass = new DataTable();
+                sqlDat.Fill(DataMass);
+                for (int i = 0; i < dataGridView1.RowCount - 1; i++)
+                {
+
+                    if (DateTime.Parse(dataGridView1.SelectedRows[i].Cells[5].ToString()) > DateTime.Parse(textBox2.Text) & DateTime.Parse(dataGridView1.SelectedRows[i].Cells[5].ToString()) < DateTime.Parse(textBox4.Text))
+                    {
+                        int ind = dataGridView1.SelectedCells[0].RowIndex;
+                        dataGridView1.Rows.RemoveAt(ind);
+                    }
+
+
+                }
+                dataGridView1.DataSource = DataMass;
+            }
+           
+        }
+
+        private void товарыНаСкладеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int perrow = 0; perrow < dataGridView1.Rows.Count; perrow++)
+            {
+                dataGridView1.Rows.Remove(dataGridView1.Rows[perrow]);
+            }
+            using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                SqlDataAdapter sqlDat = new SqlDataAdapter("SELECT * FROM [Product_data] WHERE Storage_status ='In_storage'", sqlConect);
+                DataTable DataMass = new DataTable();
+                sqlDat.Fill(DataMass);
+                for (int i = 0; i < dataGridView1.RowCount - 1; i++)
+                {
+
+                    if (DateTime.Parse(dataGridView1.SelectedRows[i].Cells[5].ToString()) > DateTime.Parse(textBox2.Text) & DateTime.Parse(dataGridView1.SelectedRows[i].Cells[5].ToString()) < DateTime.Parse(textBox4.Text))
+                    {
+                        int ind = dataGridView1.SelectedCells[0].RowIndex;
+                        dataGridView1.Rows.RemoveAt(ind);
+                    }
+
+
+                }
+                dataGridView1.DataSource = DataMass;
+            }
+        
+        }
+
+        private void проданныеТоварыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int perrow = 0; perrow < dataGridView1.Rows.Count; perrow++)
+            {
+                dataGridView1.Rows.Remove(dataGridView1.Rows[perrow]);
+            }
+            using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                SqlDataAdapter sqlDat = new SqlDataAdapter("SELECT * FROM [Product_data] WHERE Storage_status ='Sold'", sqlConect);
+                DataTable DataMass = new DataTable();
+                sqlDat.Fill(DataMass);
+                for (int i = 0; i < dataGridView1.RowCount - 1; i++)
+                {
+
+                    if (DateTime.Parse(dataGridView1.SelectedRows[i].Cells[5].ToString()) > DateTime.Parse(textBox2.Text) & DateTime.Parse(dataGridView1.SelectedRows[i].Cells[5].ToString()) < DateTime.Parse(textBox4.Text))
+                    {
+                        int ind = dataGridView1.SelectedCells[0].RowIndex;
+                        dataGridView1.Rows.RemoveAt(ind);
+                    }
+
+
+                }
+                dataGridView1.DataSource = DataMass;
+            }
+            
+        }
+    }
+}
