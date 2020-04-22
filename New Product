@@ -1,1 +1,227 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
+namespace Storage
+{
+    public partial class Form2 : Form
+    {
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            for (int perrow = 0; perrow < dataGridView1.Rows.Count; perrow++)
+            {
+                dataGridView1.Rows.Remove(dataGridView1.Rows[perrow]);
+            }
+            using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                SqlDataAdapter sqlDat = new SqlDataAdapter("SELECT * FROM [Product_data] WHERE Storage_status ='Take'", sqlConect);
+                SqlDataAdapter TypeData = new SqlDataAdapter("SELECT * FROM [Product_type]", sqlConect);
+                SqlDataAdapter PlaceData = new SqlDataAdapter("SELECT Product_place FROM [Product_place] WHERE Status ='Take'", sqlConect);
+                DataTable DataMass = new DataTable();
+                DataTable TypeTable = new DataTable();
+                DataTable PlaceTable = new DataTable();
+                sqlDat.Fill(DataMass);
+                TypeData.Fill(TypeTable);
+                PlaceData.Fill(PlaceTable);
+
+                foreach (DataRow pertype in TypeTable.Rows)
+                {
+                    comboBox1.Items.Add(pertype["Product_type"].ToString());
+                }  
+                foreach(DataRow perpalce in PlaceTable.Rows)
+                {
+                    comboBox2.Items.Add(perpalce["Product_place"].ToString());
+                }
+                    dataGridView1.DataSource = DataMass;
+                sqlConect.Close();
+            }
+           
+        }
+
+        private void textBox8_TextChanged(object sender, EventArgs e)
+        {
+            monthCalendar1.Visible = true;
+        }
+
+        private void monthCalendar1_DateChanged(object sender, DateRangeEventArgs e)
+        {
+            textBox8.Text = Convert.ToString(e.End).Remove(11);
+            monthCalendar1.Visible = false;
+        }
+
+        private void textBox7_TextChanged(object sender, EventArgs e)
+        {
+            comboBox1.Visible = true;
+            
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            textBox7.Text = comboBox1.SelectedItem.ToString();
+            comboBox1.Visible = false;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                
+                SqlCommand adddata = new SqlCommand("INSERT INTO [Product_data] ([Product_name], [Type], [Storage_status], [Data_receipt], [Storage_place], [Product_amount], [Info]) VALUES (@Product_name, @Type, @Storage_status, @Data_receipt, @Storage_place, @Product_amount, @Info)", sqlConect);
+                
+                adddata.Parameters.Add("@Product_name", textBox6.Text);
+                adddata.Parameters.Add("@Type", textBox7.Text);
+                adddata.Parameters.Add("@Storage_status", "Take");
+                adddata.Parameters.Add("@Data_receipt", DateTime.Parse(textBox8.Text));
+                adddata.Parameters.Add("@Storage_place", textBox9.Text);
+                adddata.Parameters.Add("@Product_amount", Int32.Parse(textBox10.Text));
+                adddata.Parameters.Add("@Info", richTextBox1.Text);
+
+                adddata.ExecuteNonQuery();
+
+               
+                Form2 form2 = new Form2();
+                form2.Show();
+                this.Hide();
+            }
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            textBox9.Text = comboBox2.SelectedItem.ToString();
+            comboBox2.Visible = false;
+        }
+
+        private void textBox9_TextChanged(object sender, EventArgs e)
+        {
+            comboBox2.Visible = true;
+        }
+    }
+}
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Storage
+{
+    public partial class Form2 : Form
+    {
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            for (int perrow = 0; perrow < dataGridView1.Rows.Count; perrow++)
+            {
+                dataGridView1.Rows.Remove(dataGridView1.Rows[perrow]);
+            }
+            using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                SqlDataAdapter sqlDat = new SqlDataAdapter("SELECT * FROM [Product_data] WHERE Storage_status ='Take'", sqlConect);
+                SqlDataAdapter TypeData = new SqlDataAdapter("SELECT * FROM [Product_type]", sqlConect);
+                SqlDataAdapter PlaceData = new SqlDataAdapter("SELECT Product_place FROM [Product_place] WHERE Status ='Take'", sqlConect);
+                DataTable DataMass = new DataTable();
+                DataTable TypeTable = new DataTable();
+                DataTable PlaceTable = new DataTable();
+                sqlDat.Fill(DataMass);
+                TypeData.Fill(TypeTable);
+                PlaceData.Fill(PlaceTable);
+
+                foreach (DataRow pertype in TypeTable.Rows)
+                {
+                    comboBox1.Items.Add(pertype["Product_type"].ToString());
+                }  
+                foreach(DataRow perpalce in PlaceTable.Rows)
+                {
+                    comboBox2.Items.Add(perpalce["Product_place"].ToString());
+                }
+                    dataGridView1.DataSource = DataMass;
+                sqlConect.Close();
+            }
+           
+        }
+
+        private void textBox8_TextChanged(object sender, EventArgs e)
+        {
+            monthCalendar1.Visible = true;
+        }
+
+        private void monthCalendar1_DateChanged(object sender, DateRangeEventArgs e)
+        {
+            textBox8.Text = Convert.ToString(e.End).Remove(11);
+            monthCalendar1.Visible = false;
+        }
+
+        private void textBox7_TextChanged(object sender, EventArgs e)
+        {
+            comboBox1.Visible = true;
+            
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            textBox7.Text = comboBox1.SelectedItem.ToString();
+            comboBox1.Visible = false;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                
+                SqlCommand adddata = new SqlCommand("INSERT INTO [Product_data] ([Product_name], [Type], [Storage_status], [Data_receipt], [Storage_place], [Product_amount], [Info]) VALUES (@Product_name, @Type, @Storage_status, @Data_receipt, @Storage_place, @Product_amount, @Info)", sqlConect);
+                
+                adddata.Parameters.Add("@Product_name", textBox6.Text);
+                adddata.Parameters.Add("@Type", textBox7.Text);
+                adddata.Parameters.Add("@Storage_status", "Take");
+                adddata.Parameters.Add("@Data_receipt", DateTime.Parse(textBox8.Text));
+                adddata.Parameters.Add("@Storage_place", textBox9.Text);
+                adddata.Parameters.Add("@Product_amount", Int32.Parse(textBox10.Text));
+                adddata.Parameters.Add("@Info", richTextBox1.Text);
+
+                adddata.ExecuteNonQuery();
+
+               
+                Form2 form2 = new Form2();
+                form2.Show();
+                this.Hide();
+            }
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            textBox9.Text = comboBox2.SelectedItem.ToString();
+            comboBox2.Visible = false;
+        }
+
+        private void textBox9_TextChanged(object sender, EventArgs e)
+        {
+            comboBox2.Visible = true;
+        }
+    }
+}
