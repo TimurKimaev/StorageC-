@@ -1,0 +1,97 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+
+namespace Storage
+{
+    public partial class Form3 : Form
+    {
+        public Form3()
+        {
+            InitializeComponent();
+        }
+
+        private void Form3_Load(object sender, EventArgs e)
+        {
+            using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                SqlDataAdapter sqlDat = new SqlDataAdapter("SELECT * FROM [Product_data] WHERE Storage_status ='Take' OR Storage_status ='In_Storage'", sqlConect);
+                DataTable DataMass = new DataTable();
+                sqlDat.Fill(DataMass);
+
+                dataGridView1.DataSource = DataMass;
+                foreach (DataRow PerData in DataMass.Rows)
+                {
+                    comboBox1.Items.Add(PerData["ID"].ToString());
+                }
+                SqlDataAdapter PlaceData = new SqlDataAdapter("SELECT Product_place FROM [Product_place] WHERE Status ='In_Storage'", sqlConect);
+                DataTable PlaceTable = new DataTable();
+                sqlDat.Fill(DataMass);
+                PlaceData.Fill(PlaceTable);
+
+                foreach (DataRow perplace in PlaceTable.Rows)
+                {
+                    comboBox2.Items.Add(perplace["Product_place"].ToString());
+                }
+            }
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                SqlCommand updata = new SqlCommand("UPDATE [Product_data]" +
+                    " SET Storage_status = 'sold', Data_sold = GETDATE(), Storage_palce = @storage_place" +
+                    " WHERE ID = @id");
+                updata.Parameters.AddWithValue("@storage_place",textBox3.Text);
+                updata.Parameters.AddWithValue("@id", comboBox1.SelectedItem);
+            }
+            Form3 form3 = new Form3();
+            form3.Show();
+            this.Hide();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                SqlCommand updata = new SqlCommand("UPDATE [Product_data]" +
+                    " SET Storage_status = 'In_storage', Data_stockpiled = GETDATE(), Storage_palce = @storage_place" +
+                    " WHERE ID = @id");
+                updata.Parameters.AddWithValue("@storage_place", textBox3.Text);
+                updata.Parameters.AddWithValue("@id", comboBox2.SelectedItem);
+            }
+            Form3 form3 = new Form3();
+            form3.Show();
+            this.Hide();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            using (SqlConnection sqlConect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Calakacka\source\repos\storage\Database1.mdf;Integrated Security=True"))
+            {
+                sqlConect.Open();
+                SqlCommand namedata = new SqlCommand("SELECT Product_Name FROM [Product_data] WHERE Id = @id", sqlConect);
+                namedata.Parameters.AddWithValue("@id", comboBox1.SelectedItem);
+                textBox2.Text =namedata.ExecuteScalar().ToString();
+            }
+            
+        }
+    }
+}
